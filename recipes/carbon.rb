@@ -37,7 +37,6 @@ if node['graphite']['carbon']['enable_amqp']
 end
 
 version = node['graphite']['version']
-pyver = node['languages']['python']['version'][0..-3]
 
 remote_file "#{Chef::Config[:file_cache_path]}/carbon-#{version}.tar.gz" do
   source node['graphite']['carbon']['uri']
@@ -52,8 +51,11 @@ end
 
 execute "install carbon" do
   command "python setup.py install --prefix=#{node['graphite']['base_dir']} --install-lib=#{node['graphite']['base_dir']}/lib"
-  creates "#{node['graphite']['base_dir']}/lib/carbon-#{version}-py#{pyver}.egg-info"
   cwd "#{Chef::Config[:file_cache_path]}/carbon-#{version}"
+  not_if do
+    pyver = node['languages']['python']['version'][0..-3]
+    ::File.exists?(::File.join(node['graphite']['base_dir'], "lib", "carbon-#{version}-py#{pyver}.egg-info"))
+  end
 end
 
 template "#{node['graphite']['base_dir']}/conf/carbon.conf" do
@@ -84,4 +86,3 @@ directory "#{node['graphite']['base_dir']}/lib/twisted/plugins/" do
   group node['graphite']['group_account']
   recursive true
 end
-
