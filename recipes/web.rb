@@ -23,11 +23,7 @@ storagedir = node['graphite']['storage_dir']
 version = node['graphite']['version']
 pyver = node['languages']['python'] && node['languages']['python']['version'][0..-3] || node['python']['version'][0..-3]
 
-if node['graphite']['web_server'] == 'apache'
-  graphite_web_service_resource = 'service[apache2]'
-else
-  graphite_web_service_resource = 'runit_service[graphite-web]'
-end
+graphite_web_service_resource = 'runit_service[graphite-web]'
 
 password = node['graphite']['password']
 if node['graphite']['encrypted_data_bag']['name']
@@ -136,8 +132,4 @@ file "#{storagedir}/graphite.db" do
   mode 00644
 end
 
-if node['graphite']['web_server'] == 'apache'
-  include_recipe 'graphite::apache'
-else
-  include_recipe 'graphite::uwsgi'
-end
+include_recipe 'graphite::uwsgi'

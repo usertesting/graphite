@@ -3,8 +3,6 @@
 # Attributes:: default
 #
 
-include_attribute 'apache2'
-
 default['graphite']['version'] = '0.9.10'
 default['graphite']['password'] = 'change_me'
 default['graphite']['chef_role'] = 'graphite'
@@ -38,17 +36,11 @@ default['graphite']['web']['admin_email'] = 'admin@org.com'
 default['graphite']['web']['cluster_servers'] = []
 default['graphite']['web']['carbonlink_hosts'] = []
 default['graphite']['web']['memcached_hosts'] = ['127.0.0.1:11211']
-default['graphite']['web_server'] = 'apache'
+default['graphite']['web_server'] = 'uwsgi'
 default['graphite']['create_user'] = false
 
-case node['graphite']['web_server']
-when 'apache'
-  default['graphite']['user_account'] = node['apache']['user']
-  default['graphite']['group_account'] = node['apache']['group']
-when 'uwsgi'
-  default['graphite']['user_account'] = 'graphite'
-  default['graphite']['group_account'] = 'graphite'
-end
+default['graphite']['user_account'] = 'graphite'
+default['graphite']['group_account'] = 'graphite'
 
 default['graphite']['ssl']['enabled'] = false
 default['graphite']['ssl']['cipher_suite'] = 'ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP'
